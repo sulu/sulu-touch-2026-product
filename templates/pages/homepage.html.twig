@@ -2,12 +2,28 @@
 
 {% block content %}
     <section class="bg-gradient-to-br from-brand-900 to-brand-700 text-white">
-        <div class="mx-auto max-w-6xl px-6 py-20 lg:py-28">
-            <p class="flex items-center gap-3 text-sm font-semibold uppercase tracking-widest text-brand-200">
-                {{ include('_gem.html.twig', {class: 'h-5'}) }} Sulu Touch 2026
-            </p>
-            <h1 class="mt-5 max-w-3xl text-5xl font-bold tracking-tight lg:text-6xl">{{ content.title }}</h1>
-            <div class="mt-5 max-w-xl text-lg text-brand-100">{{ content.article|raw }}</div>
+        <div class="mx-auto grid max-w-6xl items-center gap-12 px-6 py-16 lg:grid-cols-2 lg:py-24">
+            <div>
+                <p class="flex items-center gap-3 text-sm font-semibold uppercase tracking-widest text-brand-200">
+                    {{ include('_gem.html.twig', {class: 'h-5'}) }} Sulu Touch 2026
+                </p>
+                <h1 class="mt-5 text-5xl font-bold tracking-tight lg:text-6xl">{{ content.title }}</h1>
+                <div class="mt-5 max-w-xl text-lg text-brand-100">{{ content.article|raw }}</div>
+                <a href="{{ sulu_content_path('/products') }}"
+                   class="mt-8 inline-block rounded-full bg-clay px-7 py-3 font-semibold text-white shadow-lg transition hover:brightness-110">
+                    Shop the collection
+                </a>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                {% for item in content.featured|default([]) %}
+                    <a href="{{ sulu_content_path(item.url) }}"
+                       class="group relative block overflow-hidden rounded-3xl shadow-xl ring-1 ring-white/10 {{ loop.index is even ? 'translate-y-6' : '' }}">
+                        {{ include('products/_image.html.twig', {image: item.image|default(null), format: 'product-card', alt: item.title, class: 'aspect-square w-full object-cover transition duration-300 group-hover:scale-105'}) }}
+                        <span class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 text-sm font-semibold">{{ item.title }}</span>
+                    </a>
+                {% endfor %}
+            </div>
         </div>
     </section>
 

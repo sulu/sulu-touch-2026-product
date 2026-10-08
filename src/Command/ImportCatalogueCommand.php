@@ -11,6 +11,7 @@ use Sulu\Bundle\MediaBundle\Media\Manager\MediaManagerInterface;
 use Sulu\Bundle\SecurityBundle\Entity\User;
 use Sulu\Messenger\Infrastructure\Symfony\Messenger\FlushMiddleware\EnableFlushStamp;
 use Sulu\Page\Application\Message\ApplyWorkflowTransitionPageMessage;
+use Sulu\Page\Application\Message\CreatePageMessage;
 use Sulu\Page\Application\Message\ModifyPageMessage;
 use Sulu\Page\Domain\Model\PageInterface;
 use Sulu\Page\Domain\Repository\PageRepositoryInterface;
@@ -83,6 +84,7 @@ final class ImportCatalogueCommand extends Command
         $productIds = $this->createProducts($familyIds, $attributeIds);
         $this->associateAndPublish($productIds);
         $this->updateHomepage($productIds);
+        $this->createCataloguePage();
 
         $io->success(\sprintf('Imported %d attributes, %d families and %d products.', \count($attributeIds), \count($familyIds), \count($this->data->products())));
 
@@ -240,6 +242,7 @@ final class ImportCatalogueCommand extends Command
 
     /**
      * The start page gets its headline and its lead text.
+     * Its `featured` selection holds the products to start with: a variant with a URL is selectable like a product.
      *
      * @param array<string, string> $productIds
      */
@@ -252,6 +255,7 @@ final class ImportCatalogueCommand extends Command
             'title' => 'Merch for developers',
             'url' => '/',
             'article' => '<p>Shirts, hoodies and mugs that compile on the first try. Made for the people who build the web.</p>',
+            'featured' => \array_map(static fn (string $code): string => $productIds[$code], ['TS-1006-TEA-M', 'HD-2001-BLA-M', 'AC-6007', 'ST-5003']),
         ]));
         $this->dispatch(new ApplyWorkflowTransitionPageMessage(['uuid' => $homepage->getUuid()], self::LOCALE, 'publish'));
     }
@@ -262,6 +266,23 @@ final class ImportCatalogueCommand extends Command
         \assert($homepage instanceof PageInterface);
 
         return $homepage;
+    }
+
+    /**
+     * The page that lists the products. Its template renders the search results.
+     */
+    private function createCataloguePage(): void
+    {
+        $page = $this->dispatch(new CreatePageMessage('website', $this->homepage()->getUuid(), [
+            'locale' => self::LOCALE,
+            'template' => 'products',
+            'title' => 'Products',
+            'url' => '/products',
+            'introduction' => '<p>Shirts, hoodies, mugs and more for developers. Filter by colour, size and material.</p>',
+            'navigationContexts' => ['main'],
+        ]));
+        \assert($page instanceof PageInterface);
+        $this->dispatch(new ApplyWorkflowTransitionPageMessage(['uuid' => $page->getUuid()], self::LOCALE, 'publish'));
     }
 
     /**

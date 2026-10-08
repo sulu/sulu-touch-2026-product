@@ -17,3 +17,8 @@ sulu_product:
     variants:
         properties:
             attributes: product.attributes
+
+    search:
+        website:
+            # adds the product family and the attribute values as filter fields to the website index
+            additional_product_filters: true

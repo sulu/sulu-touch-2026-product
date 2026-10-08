@@ -38,9 +38,23 @@
 
         <property name="article" type="text_editor">
             <meta>
-                <title lang="en">Article</title>
-                <title lang="de">Artikel</title>
+                <title lang="en">Lead text</title>
+                <title lang="de">Einleitung</title>
             </meta>
+        </property>
+
+        <property name="featured" type="product_selection">
+            <meta>
+                <title lang="en">Featured products</title>
+                <title lang="de">Ausgewählte Produkte</title>
+            </meta>
+
+            <params>
+                <param name="properties" type="collection">
+                    <param name="title" value="title"/>
+                    <param name="image" value="image"/>
+                </param>
+            </params>
         </property>
     </properties>
 </template>
