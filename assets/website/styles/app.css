@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme {
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --color-cream: #f7f5f0;
+    --color-brand-50: #eef5f6;
+    --color-brand-100: #dbeaec;
+    --color-brand-200: #b8d5d9;
+    --color-brand-500: #3f7f89;
+    --color-brand-600: #3f6e77;
+    --color-brand-700: #2f5860;
+    --color-brand-900: #1a2b4e;
+    --color-clay: #b97f12;
+}
+
+@layer base {
+    body {
+        @apply bg-cream text-brand-900 antialiased;
+    }
+}

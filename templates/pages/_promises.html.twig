@@ -1,0 +1,12 @@
+<section class="mx-auto grid max-w-6xl gap-6 px-6 py-16 md:grid-cols-3">
+    {% for promise in [
+        {title: 'Made for developers', text: 'Prints you only get if you have read a stack trace.'},
+        {title: 'One product, many variants', text: 'Pick the colour and the size on one page. Same code, many outfits.'},
+        {title: 'Reviewed before it ships', text: 'Every product is checked before it goes live. Unlike some Friday deploys.'},
+    ] %}
+        <div class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-brand-100">
+            <h2 class="font-semibold">{{ promise.title }}</h2>
+            <p class="mt-2 text-sm text-brand-700">{{ promise.text }}</p>
+        </div>
+    {% endfor %}
+</section>

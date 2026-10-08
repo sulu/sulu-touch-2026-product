@@ -1,0 +1,10 @@
+framework:
+    asset_mapper:
+        paths:
+            - assets/website
+        vendor_dir: '%kernel.project_dir%/assets/website/vendor'
+
+when@prod:
+    framework:
+        asset_mapper:
+            missing_import_mode: warn

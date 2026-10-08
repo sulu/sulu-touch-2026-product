@@ -1,7 +1,15 @@
 {% extends 'base.html.twig' %}
 
 {% block content %}
-    <h1>{{ content.title }}</h1>
+    <section class="bg-gradient-to-br from-brand-900 to-brand-700 text-white">
+        <div class="mx-auto max-w-6xl px-6 py-20 lg:py-28">
+            <p class="flex items-center gap-3 text-sm font-semibold uppercase tracking-widest text-brand-200">
+                {{ include('_gem.html.twig', {class: 'h-5'}) }} Sulu Touch 2026
+            </p>
+            <h1 class="mt-5 max-w-3xl text-5xl font-bold tracking-tight lg:text-6xl">{{ content.title }}</h1>
+            <div class="mt-5 max-w-xl text-lg text-brand-100">{{ content.article|raw }}</div>
+        </div>
+    </section>
 
-    {{ content.article|raw }}
+    {{ include('pages/_promises.html.twig') }}
 {% endblock %}

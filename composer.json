@@ -41,6 +41,7 @@
         "stof/doctrine-extensions-bundle": "^1.11",
         "sulu/product-bundle": "3.0.x-dev",
         "sulu/sulu": "~3.1.0@dev",
+        "symfony/asset-mapper": "7.4.*",
         "symfony/config": "^7.4",
         "symfony/dotenv": "^7.4",
         "symfony/flex": "^1.17 || ^2.0",
@@ -50,7 +51,10 @@
         "symfony/monolog-bundle": "^4.0",
         "symfony/runtime": "^7.4",
         "symfony/security-bundle": "^7.4",
-        "symfony/twig-bundle": "^7.4"
+        "symfony/stimulus-bundle": "^3.5",
+        "symfony/twig-bundle": "^7.4",
+        "symfony/ux-turbo": "^3.5",
+        "symfonycasts/tailwind-bundle": "^1.0"
     },
     "require-dev": {
         "cmsig/seal-memory-adapter": "^0.12.2",
@@ -106,7 +110,8 @@
             "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd",
             "bin/websiteconsole cache:clear": "php-script",
-            "bin/adminconsole sulu:media:init": "php-script"
+            "bin/adminconsole sulu:media:init": "php-script",
+            "importmap:install": "symfony-cmd"
         },
         "post-install-cmd": [
             "@auto-scripts"
