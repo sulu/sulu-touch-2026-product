@@ -42,6 +42,12 @@ final class CatalogueDataTest extends TestCase
                     self::assertContains($code, $codes, $product['code']);
                 }
             }
+            foreach ($product['variants'] ?? [] as $variant) {
+                self::assertFileExists(__DIR__ . '/../data/images/' . $variant['image']);
+                foreach (\array_keys($variant['attributes']) as $key) {
+                    self::assertArrayHasKey($key, $families[$product['family']]['attributes'], $variant['code'] . ' ' . $key);
+                }
+            }
         }
     }
 }

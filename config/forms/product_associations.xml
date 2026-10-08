@@ -16,6 +16,7 @@
                     <param name="headline" value="headline"/>
                     <param name="claim" value="claim"/>
                     <param name="image" value="image"/>
+                    <param name="variants" value="product.variants"/>
                 </param>
             </params>
         </property>
@@ -30,6 +31,7 @@
                     <param name="headline" value="headline"/>
                     <param name="claim" value="claim"/>
                     <param name="image" value="image"/>
+                    <param name="variants" value="product.variants"/>
                 </param>
             </params>
         </property>

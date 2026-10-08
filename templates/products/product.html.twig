@@ -10,9 +10,10 @@
 {% endblock %}
 
 {% block content %}
-    {% set attributeGroups = product.attributes|sulu_product_attribute_groups %}
+    {% set variant = product.currentVariant|default(null) %}
+    {% set attributeGroups = sulu_product_merge_attributes(product.attributes, variant.attributes|default({}))|sulu_product_attribute_groups %}
     {% set isLimited = attributeGroups|map(group => group.attributes.limited_edition.formattedValue|default(false))|filter(flag => flag)|length > 0 %}
-    {% set image = product.image|default(null) %}
+    {% set image = variant.image|default(product.image)|default(null) %}
 
     <article class="mx-auto grid max-w-6xl gap-12 px-6 py-12 lg:grid-cols-2">
         <div class="self-start overflow-hidden rounded-3xl bg-brand-50 ring-1 ring-brand-100">
@@ -23,11 +24,62 @@
             <div class="flex items-center gap-3 text-xs font-semibold uppercase tracking-widest">
                 <span class="rounded-full bg-brand-100 px-3 py-1 text-brand-700">{{ product.productFamily.name }}</span>
                 {% if isLimited %}<span class="rounded-full bg-clay/15 px-3 py-1 text-clay">Limited edition</span>{% endif %}
-                <span class="text-brand-700/70">{{ product.code }}</span>
+                <span class="text-brand-700/70">{{ variant ? variant.code : product.code }}</span>
             </div>
 
             <h1 class="mt-4 text-4xl font-bold tracking-tight">{{ content.headline|default(product.title) }}</h1>
             <p class="mt-2 text-xl text-clay">{{ content.claim }}</p>
+
+            {% if product.variants is defined %}
+                {% set variants = product.variants %}
+                {% set currentColour = variant ? variant.attributes.colour.attributeOptionKey|default : null %}
+                {% set currentSize = variant ? variant.attributes.size.attributeOptionKey|default : null %}
+                {% set swatches = {black: '#16181d', white: '#ffffff', teal: '#3f6e77', mustard: '#e0a526', navy: '#1a2b4e', red: '#c0392b', yellow: '#f2c230'} %}
+
+                <div class="mt-6">
+                    <h2 class="text-sm font-semibold uppercase tracking-widest text-brand-600">Colour</h2>
+                    <ul class="mt-2 flex flex-wrap gap-3">
+                        {% set seen = [] %}
+                        {% for option in variants %}
+                            {% set colour = option.attributes.colour.attributeOptionKey|default %}
+                            {% if colour and colour not in seen %}
+                                {% set seen = seen|merge([colour]) %}
+                                {% set target = variants|filter(v => v.attributes.colour.attributeOptionKey|default == colour and v.attributes.size.attributeOptionKey|default == currentSize)|first|default(option) %}
+                                <li>
+                                    <a href="{{ sulu_content_path(target.url) }}" title="{{ option.attributes.colour|sulu_product_format_attribute_value }}"
+                                       {% if colour == currentColour %}aria-current="page"{% endif %}
+                                       class="block size-9 rounded-full ring-2 ring-offset-2 {{ colour == currentColour ? 'ring-brand-600' : 'ring-brand-100 hover:ring-brand-500' }}"
+                                       style="background: {{ swatches[colour]|default('#cccccc') }}"></a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                {% set sizes = [] %}
+                {% for option in variants %}
+                    {% set size = option.attributes.size.attributeOptionKey|default %}
+                    {% if size and size not in sizes %}{% set sizes = sizes|merge([size]) %}{% endif %}
+                {% endfor %}
+                {% if sizes|length > 1 %}
+                    <div class="mt-6">
+                        <h2 class="text-sm font-semibold uppercase tracking-widest text-brand-600">Size</h2>
+                        <ul class="mt-2 flex flex-wrap gap-2">
+                            {% for size in sizes %}
+                                {% set target = variants|filter(v => v.attributes.size.attributeOptionKey|default == size and v.attributes.colour.attributeOptionKey|default == currentColour)|first|default(null) %}
+                                {% if target %}
+                                    <li>
+                                        <a href="{{ sulu_content_path(target.url) }}" {% if size == currentSize %}aria-current="page"{% endif %}
+                                           class="rounded-full px-4 py-2 text-sm font-medium ring-1 {{ size == currentSize ? 'bg-brand-600 text-white ring-brand-600' : 'bg-white ring-brand-200 hover:ring-brand-500' }}">
+                                            {{ target.attributes.size|sulu_product_format_attribute_value }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+            {% endif %}
 
             <div class="mt-6 max-w-none leading-relaxed text-brand-900/80">{{ content.description|raw }}</div>
 

@@ -173,7 +173,7 @@ final class ImportCatalogueCommand extends Command
             $created = $this->dispatch(new CreateProductMessage([
                 'locale' => self::LOCALE,
                 'template' => 'product',
-                'type' => ProductInterface::TYPE_PRODUCT,
+                'type' => isset($product['variants']) ? ProductInterface::TYPE_PRODUCT_WITH_VARIANTS : ProductInterface::TYPE_PRODUCT,
                 'productFamily' => $familyIds[$product['family']],
                 'code' => $product['code'],
                 'title' => $product['title'],
@@ -187,6 +187,23 @@ final class ImportCatalogueCommand extends Command
             ]));
             \assert($created instanceof ProductInterface);
             $productIds[$product['code']] = (string) $created->getUuid();
+
+            // a variant belongs to its product and carries only the attributes its family marks as variant
+            foreach ($product['variants'] ?? [] as $variant) {
+                $created = $this->dispatch(new CreateProductMessage([
+                    'locale' => self::LOCALE,
+                    'type' => ProductInterface::TYPE_VARIANT,
+                    'parent' => $productIds[$product['code']],
+                    'productFamily' => $familyIds[$product['family']],
+                    'code' => $variant['code'],
+                    'title' => $variant['title'],
+                    'attributes' => $this->values($variant['attributes'], $attributeIds),
+                    'url' => $this->url($variant['title']),
+                    'details' => ['image' => ['id' => $this->image($variant['image'], $variant['title'])]],
+                ]));
+                \assert($created instanceof ProductInterface);
+                $productIds[$variant['code']] = (string) $created->getUuid();
+            }
         }
 
         return $productIds;
@@ -210,6 +227,9 @@ final class ImportCatalogueCommand extends Command
             }
 
             $this->publish($productIds[$product['code']]);
+            foreach ($product['variants'] ?? [] as $variant) {
+                $this->publish($productIds[$variant['code']]);
+            }
         }
     }
 

@@ -171,7 +171,7 @@ final class CatalogueData
     }
 
     /**
-     * @return list<array{code: string, family: string, title: string, claim: string, description: string, image: string, attributes: array<string, bool|float|int|string>, associations?: array<string, list<string>>}>
+     * @return list<array{code: string, family: string, title: string, claim: string, description: string, image: string, attributes: array<string, bool|float|int|string>, associations?: array<string, list<string>>, variants?: list<array{code: string, title: string, image: string, attributes: array<string, string>}>}>
      */
     public function products(): array
     {
@@ -194,6 +194,14 @@ final class CatalogueData
                     'fun_fact' => 'The first Hello, World program is from the 1970s.',
                 ],
                 'associations' => ['accessory' => ['MG-4001', 'ST-5001'], 'alternative' => ['TS-1002']],
+                'variants' => [
+                    ['code' => 'TS-1001-TEA-S', 'title' => 'Hello World T-Shirt, Teal, S', 'image' => 'hello-world-t-shirt-teal.jpg', 'attributes' => ['colour' => 'teal', 'size' => 's']],
+                    ['code' => 'TS-1001-TEA-M', 'title' => 'Hello World T-Shirt, Teal, M', 'image' => 'hello-world-t-shirt-teal.jpg', 'attributes' => ['colour' => 'teal', 'size' => 'm']],
+                    ['code' => 'TS-1001-TEA-L', 'title' => 'Hello World T-Shirt, Teal, L', 'image' => 'hello-world-t-shirt-teal.jpg', 'attributes' => ['colour' => 'teal', 'size' => 'l']],
+                    ['code' => 'TS-1001-MUS-S', 'title' => 'Hello World T-Shirt, Mustard, S', 'image' => 'hello-world-t-shirt-mustard.jpg', 'attributes' => ['colour' => 'mustard', 'size' => 's']],
+                    ['code' => 'TS-1001-MUS-M', 'title' => 'Hello World T-Shirt, Mustard, M', 'image' => 'hello-world-t-shirt-mustard.jpg', 'attributes' => ['colour' => 'mustard', 'size' => 'm']],
+                    ['code' => 'TS-1001-MUS-L', 'title' => 'Hello World T-Shirt, Mustard, L', 'image' => 'hello-world-t-shirt-mustard.jpg', 'attributes' => ['colour' => 'mustard', 'size' => 'l']],
+                ],
             ],
             [
                 'code' => 'TS-1002',
@@ -213,6 +221,14 @@ final class CatalogueData
                     'fun_fact' => 'This sentence is older than most web frameworks.',
                 ],
                 'associations' => ['accessory' => ['MG-4002', 'ST-5003'], 'alternative' => ['TS-1001']],
+                'variants' => [
+                    ['code' => 'TS-1002-WHI-S', 'title' => 'It Works On My Machine T-Shirt, White, S', 'image' => 'it-works-on-my-machine-t-shirt-white.jpg', 'attributes' => ['colour' => 'white', 'size' => 's']],
+                    ['code' => 'TS-1002-WHI-M', 'title' => 'It Works On My Machine T-Shirt, White, M', 'image' => 'it-works-on-my-machine-t-shirt-white.jpg', 'attributes' => ['colour' => 'white', 'size' => 'm']],
+                    ['code' => 'TS-1002-WHI-L', 'title' => 'It Works On My Machine T-Shirt, White, L', 'image' => 'it-works-on-my-machine-t-shirt-white.jpg', 'attributes' => ['colour' => 'white', 'size' => 'l']],
+                    ['code' => 'TS-1002-BLA-S', 'title' => 'It Works On My Machine T-Shirt, Black, S', 'image' => 'it-works-on-my-machine-t-shirt-black.jpg', 'attributes' => ['colour' => 'black', 'size' => 's']],
+                    ['code' => 'TS-1002-BLA-M', 'title' => 'It Works On My Machine T-Shirt, Black, M', 'image' => 'it-works-on-my-machine-t-shirt-black.jpg', 'attributes' => ['colour' => 'black', 'size' => 'm']],
+                    ['code' => 'TS-1002-BLA-L', 'title' => 'It Works On My Machine T-Shirt, Black, L', 'image' => 'it-works-on-my-machine-t-shirt-black.jpg', 'attributes' => ['colour' => 'black', 'size' => 'l']],
+                ],
             ],
             [
                 'code' => 'TS-1003',
@@ -232,6 +248,14 @@ final class CatalogueData
                     'fun_fact' => '404 is the HTTP status code for Not Found.',
                 ],
                 'associations' => ['accessory' => ['ST-5001'], 'alternative' => ['TS-1004']],
+                'variants' => [
+                    ['code' => 'TS-1003-NAV-S', 'title' => '404 Not Found T-Shirt, Navy, S', 'image' => '404-not-found-t-shirt-navy.jpg', 'attributes' => ['colour' => 'navy', 'size' => 's']],
+                    ['code' => 'TS-1003-NAV-M', 'title' => '404 Not Found T-Shirt, Navy, M', 'image' => '404-not-found-t-shirt-navy.jpg', 'attributes' => ['colour' => 'navy', 'size' => 'm']],
+                    ['code' => 'TS-1003-NAV-L', 'title' => '404 Not Found T-Shirt, Navy, L', 'image' => '404-not-found-t-shirt-navy.jpg', 'attributes' => ['colour' => 'navy', 'size' => 'l']],
+                    ['code' => 'TS-1003-WHI-S', 'title' => '404 Not Found T-Shirt, White, S', 'image' => '404-not-found-t-shirt-white.jpg', 'attributes' => ['colour' => 'white', 'size' => 's']],
+                    ['code' => 'TS-1003-WHI-M', 'title' => '404 Not Found T-Shirt, White, M', 'image' => '404-not-found-t-shirt-white.jpg', 'attributes' => ['colour' => 'white', 'size' => 'm']],
+                    ['code' => 'TS-1003-WHI-L', 'title' => '404 Not Found T-Shirt, White, L', 'image' => '404-not-found-t-shirt-white.jpg', 'attributes' => ['colour' => 'white', 'size' => 'l']],
+                ],
             ],
             [
                 'code' => 'TS-1004',
@@ -251,6 +275,14 @@ final class CatalogueData
                     'fun_fact' => 'A missing semicolon can stop a whole program.',
                 ],
                 'associations' => ['accessory' => ['ST-5002', 'AC-6001'], 'alternative' => ['TS-1003']],
+                'variants' => [
+                    ['code' => 'TS-1004-BLA-S', 'title' => 'Semicolon T-Shirt, Black, S', 'image' => 'semicolon-t-shirt-black.jpg', 'attributes' => ['colour' => 'black', 'size' => 's']],
+                    ['code' => 'TS-1004-BLA-M', 'title' => 'Semicolon T-Shirt, Black, M', 'image' => 'semicolon-t-shirt-black.jpg', 'attributes' => ['colour' => 'black', 'size' => 'm']],
+                    ['code' => 'TS-1004-BLA-L', 'title' => 'Semicolon T-Shirt, Black, L', 'image' => 'semicolon-t-shirt-black.jpg', 'attributes' => ['colour' => 'black', 'size' => 'l']],
+                    ['code' => 'TS-1004-MUS-S', 'title' => 'Semicolon T-Shirt, Mustard, S', 'image' => 'semicolon-t-shirt-mustard.jpg', 'attributes' => ['colour' => 'mustard', 'size' => 's']],
+                    ['code' => 'TS-1004-MUS-M', 'title' => 'Semicolon T-Shirt, Mustard, M', 'image' => 'semicolon-t-shirt-mustard.jpg', 'attributes' => ['colour' => 'mustard', 'size' => 'm']],
+                    ['code' => 'TS-1004-MUS-L', 'title' => 'Semicolon T-Shirt, Mustard, L', 'image' => 'semicolon-t-shirt-mustard.jpg', 'attributes' => ['colour' => 'mustard', 'size' => 'l']],
+                ],
             ],
             [
                 'code' => 'TS-1005',
@@ -270,6 +302,14 @@ final class CatalogueData
                     'fun_fact' => 'The command sudo runs another command with the rights of an admin.',
                 ],
                 'associations' => ['accessory' => ['AC-6002'], 'alternative' => ['TS-1006']],
+                'variants' => [
+                    ['code' => 'TS-1005-BLA-S', 'title' => 'Sudo T-Shirt, Black, S', 'image' => 'sudo-t-shirt-black.jpg', 'attributes' => ['colour' => 'black', 'size' => 's']],
+                    ['code' => 'TS-1005-BLA-M', 'title' => 'Sudo T-Shirt, Black, M', 'image' => 'sudo-t-shirt-black.jpg', 'attributes' => ['colour' => 'black', 'size' => 'm']],
+                    ['code' => 'TS-1005-BLA-L', 'title' => 'Sudo T-Shirt, Black, L', 'image' => 'sudo-t-shirt-black.jpg', 'attributes' => ['colour' => 'black', 'size' => 'l']],
+                    ['code' => 'TS-1005-NAV-S', 'title' => 'Sudo T-Shirt, Navy, S', 'image' => 'sudo-t-shirt-navy.jpg', 'attributes' => ['colour' => 'navy', 'size' => 's']],
+                    ['code' => 'TS-1005-NAV-M', 'title' => 'Sudo T-Shirt, Navy, M', 'image' => 'sudo-t-shirt-navy.jpg', 'attributes' => ['colour' => 'navy', 'size' => 'm']],
+                    ['code' => 'TS-1005-NAV-L', 'title' => 'Sudo T-Shirt, Navy, L', 'image' => 'sudo-t-shirt-navy.jpg', 'attributes' => ['colour' => 'navy', 'size' => 'l']],
+                ],
             ],
             [
                 'code' => 'TS-1006',
@@ -290,6 +330,14 @@ final class CatalogueData
                     'limited_edition' => true,
                 ],
                 'associations' => ['accessory' => ['AC-6007', 'AC-6008'], 'alternative' => ['TS-1005']],
+                'variants' => [
+                    ['code' => 'TS-1006-TEA-S', 'title' => 'Sulu Touch 2026 T-Shirt, Teal, S', 'image' => 'sulu-touch-2026-t-shirt-teal.jpg', 'attributes' => ['colour' => 'teal', 'size' => 's']],
+                    ['code' => 'TS-1006-TEA-M', 'title' => 'Sulu Touch 2026 T-Shirt, Teal, M', 'image' => 'sulu-touch-2026-t-shirt-teal.jpg', 'attributes' => ['colour' => 'teal', 'size' => 'm']],
+                    ['code' => 'TS-1006-TEA-L', 'title' => 'Sulu Touch 2026 T-Shirt, Teal, L', 'image' => 'sulu-touch-2026-t-shirt-teal.jpg', 'attributes' => ['colour' => 'teal', 'size' => 'l']],
+                    ['code' => 'TS-1006-WHI-S', 'title' => 'Sulu Touch 2026 T-Shirt, White, S', 'image' => 'sulu-touch-2026-t-shirt-white.jpg', 'attributes' => ['colour' => 'white', 'size' => 's']],
+                    ['code' => 'TS-1006-WHI-M', 'title' => 'Sulu Touch 2026 T-Shirt, White, M', 'image' => 'sulu-touch-2026-t-shirt-white.jpg', 'attributes' => ['colour' => 'white', 'size' => 'm']],
+                    ['code' => 'TS-1006-WHI-L', 'title' => 'Sulu Touch 2026 T-Shirt, White, L', 'image' => 'sulu-touch-2026-t-shirt-white.jpg', 'attributes' => ['colour' => 'white', 'size' => 'l']],
+                ],
             ],
             [
                 'code' => 'HD-2001',
@@ -309,6 +357,14 @@ final class CatalogueData
                     'fun_fact' => 'The hoodie is the work uniform of many developers.',
                 ],
                 'associations' => ['accessory' => ['MG-4001', 'AC-6004'], 'alternative' => ['HD-2002']],
+                'variants' => [
+                    ['code' => 'HD-2001-BLA-S', 'title' => 'Sulu Hoodie, Black, S', 'image' => 'sulu-hoodie-black.jpg', 'attributes' => ['colour' => 'black', 'size' => 's']],
+                    ['code' => 'HD-2001-BLA-M', 'title' => 'Sulu Hoodie, Black, M', 'image' => 'sulu-hoodie-black.jpg', 'attributes' => ['colour' => 'black', 'size' => 'm']],
+                    ['code' => 'HD-2001-BLA-L', 'title' => 'Sulu Hoodie, Black, L', 'image' => 'sulu-hoodie-black.jpg', 'attributes' => ['colour' => 'black', 'size' => 'l']],
+                    ['code' => 'HD-2001-TEA-S', 'title' => 'Sulu Hoodie, Teal, S', 'image' => 'sulu-hoodie-teal.jpg', 'attributes' => ['colour' => 'teal', 'size' => 's']],
+                    ['code' => 'HD-2001-TEA-M', 'title' => 'Sulu Hoodie, Teal, M', 'image' => 'sulu-hoodie-teal.jpg', 'attributes' => ['colour' => 'teal', 'size' => 'm']],
+                    ['code' => 'HD-2001-TEA-L', 'title' => 'Sulu Hoodie, Teal, L', 'image' => 'sulu-hoodie-teal.jpg', 'attributes' => ['colour' => 'teal', 'size' => 'l']],
+                ],
             ],
             [
                 'code' => 'HD-2002',
@@ -328,6 +384,14 @@ final class CatalogueData
                     'fun_fact' => 'Git marks a merge conflict with these arrow lines.',
                 ],
                 'associations' => ['accessory' => ['AC-6005'], 'alternative' => ['HD-2003']],
+                'variants' => [
+                    ['code' => 'HD-2002-NAV-S', 'title' => 'Merge Conflict Hoodie, Navy, S', 'image' => 'merge-conflict-hoodie-navy.jpg', 'attributes' => ['colour' => 'navy', 'size' => 's']],
+                    ['code' => 'HD-2002-NAV-M', 'title' => 'Merge Conflict Hoodie, Navy, M', 'image' => 'merge-conflict-hoodie-navy.jpg', 'attributes' => ['colour' => 'navy', 'size' => 'm']],
+                    ['code' => 'HD-2002-NAV-L', 'title' => 'Merge Conflict Hoodie, Navy, L', 'image' => 'merge-conflict-hoodie-navy.jpg', 'attributes' => ['colour' => 'navy', 'size' => 'l']],
+                    ['code' => 'HD-2002-MUS-S', 'title' => 'Merge Conflict Hoodie, Mustard, S', 'image' => 'merge-conflict-hoodie-mustard.jpg', 'attributes' => ['colour' => 'mustard', 'size' => 's']],
+                    ['code' => 'HD-2002-MUS-M', 'title' => 'Merge Conflict Hoodie, Mustard, M', 'image' => 'merge-conflict-hoodie-mustard.jpg', 'attributes' => ['colour' => 'mustard', 'size' => 'm']],
+                    ['code' => 'HD-2002-MUS-L', 'title' => 'Merge Conflict Hoodie, Mustard, L', 'image' => 'merge-conflict-hoodie-mustard.jpg', 'attributes' => ['colour' => 'mustard', 'size' => 'l']],
+                ],
             ],
             [
                 'code' => 'HD-2003',
@@ -347,6 +411,14 @@ final class CatalogueData
                     'fun_fact' => 'Ctrl+Z undoes your last action in most apps.',
                 ],
                 'associations' => ['accessory' => ['AC-6006', 'MG-4002'], 'alternative' => ['HD-2001']],
+                'variants' => [
+                    ['code' => 'HD-2003-BLA-S', 'title' => 'Ctrl+Z Hoodie, Black, S', 'image' => 'ctrl-z-hoodie-black.jpg', 'attributes' => ['colour' => 'black', 'size' => 's']],
+                    ['code' => 'HD-2003-BLA-M', 'title' => 'Ctrl+Z Hoodie, Black, M', 'image' => 'ctrl-z-hoodie-black.jpg', 'attributes' => ['colour' => 'black', 'size' => 'm']],
+                    ['code' => 'HD-2003-BLA-L', 'title' => 'Ctrl+Z Hoodie, Black, L', 'image' => 'ctrl-z-hoodie-black.jpg', 'attributes' => ['colour' => 'black', 'size' => 'l']],
+                    ['code' => 'HD-2003-RED-S', 'title' => 'Ctrl+Z Hoodie, Red, S', 'image' => 'ctrl-z-hoodie-red.jpg', 'attributes' => ['colour' => 'red', 'size' => 's']],
+                    ['code' => 'HD-2003-RED-M', 'title' => 'Ctrl+Z Hoodie, Red, M', 'image' => 'ctrl-z-hoodie-red.jpg', 'attributes' => ['colour' => 'red', 'size' => 'm']],
+                    ['code' => 'HD-2003-RED-L', 'title' => 'Ctrl+Z Hoodie, Red, L', 'image' => 'ctrl-z-hoodie-red.jpg', 'attributes' => ['colour' => 'red', 'size' => 'l']],
+                ],
             ],
             [
                 'code' => 'HD-2004',
@@ -367,6 +439,14 @@ final class CatalogueData
                     'limited_edition' => true,
                 ],
                 'associations' => ['accessory' => ['AC-6005'], 'alternative' => ['HD-2002']],
+                'variants' => [
+                    ['code' => 'HD-2004-YEL-S', 'title' => 'Rubber Duck Hoodie, Yellow, S', 'image' => 'rubber-duck-hoodie-yellow.jpg', 'attributes' => ['colour' => 'yellow', 'size' => 's']],
+                    ['code' => 'HD-2004-YEL-M', 'title' => 'Rubber Duck Hoodie, Yellow, M', 'image' => 'rubber-duck-hoodie-yellow.jpg', 'attributes' => ['colour' => 'yellow', 'size' => 'm']],
+                    ['code' => 'HD-2004-YEL-L', 'title' => 'Rubber Duck Hoodie, Yellow, L', 'image' => 'rubber-duck-hoodie-yellow.jpg', 'attributes' => ['colour' => 'yellow', 'size' => 'l']],
+                    ['code' => 'HD-2004-BLA-S', 'title' => 'Rubber Duck Hoodie, Black, S', 'image' => 'rubber-duck-hoodie-black.jpg', 'attributes' => ['colour' => 'black', 'size' => 's']],
+                    ['code' => 'HD-2004-BLA-M', 'title' => 'Rubber Duck Hoodie, Black, M', 'image' => 'rubber-duck-hoodie-black.jpg', 'attributes' => ['colour' => 'black', 'size' => 'm']],
+                    ['code' => 'HD-2004-BLA-L', 'title' => 'Rubber Duck Hoodie, Black, L', 'image' => 'rubber-duck-hoodie-black.jpg', 'attributes' => ['colour' => 'black', 'size' => 'l']],
+                ],
             ],
             [
                 'code' => 'CP-3001',
@@ -386,6 +466,10 @@ final class CatalogueData
                     'fun_fact' => 'Many teams never deploy on a Friday.',
                 ],
                 'associations' => ['accessory' => ['ST-5001'], 'alternative' => ['CP-3002']],
+                'variants' => [
+                    ['code' => 'CP-3001-BLA-ONE', 'title' => 'Deploy Friday Cap, Black', 'image' => 'deploy-friday-cap-black.jpg', 'attributes' => ['colour' => 'black', 'size' => 'one-size']],
+                    ['code' => 'CP-3001-NAV-ONE', 'title' => 'Deploy Friday Cap, Navy', 'image' => 'deploy-friday-cap-navy.jpg', 'attributes' => ['colour' => 'navy', 'size' => 'one-size']],
+                ],
             ],
             [
                 'code' => 'CP-3002',
@@ -405,6 +489,10 @@ final class CatalogueData
                     'fun_fact' => 'In many languages the semicolon ends a statement.',
                 ],
                 'associations' => ['accessory' => ['ST-5002'], 'alternative' => ['CP-3001']],
+                'variants' => [
+                    ['code' => 'CP-3002-MUS-ONE', 'title' => 'Semicolon Cap, Mustard', 'image' => 'semicolon-cap-mustard.jpg', 'attributes' => ['colour' => 'mustard', 'size' => 'one-size']],
+                    ['code' => 'CP-3002-WHI-ONE', 'title' => 'Semicolon Cap, White', 'image' => 'semicolon-cap-white.jpg', 'attributes' => ['colour' => 'white', 'size' => 'one-size']],
+                ],
             ],
             [
                 'code' => 'MG-4001',
@@ -424,6 +512,10 @@ final class CatalogueData
                     'fun_fact' => 'The command git push sends your work to the server.',
                 ],
                 'associations' => ['accessory' => ['AC-6005'], 'alternative' => ['MG-4002']],
+                'variants' => [
+                    ['code' => 'MG-4001-WHI', 'title' => 'git push Mug, White', 'image' => 'git-push-mug-white.jpg', 'attributes' => ['colour' => 'white']],
+                    ['code' => 'MG-4001-BLA', 'title' => 'git push Mug, Black', 'image' => 'git-push-mug-black.jpg', 'attributes' => ['colour' => 'black']],
+                ],
             ],
             [
                 'code' => 'MG-4002',
@@ -443,6 +535,10 @@ final class CatalogueData
                     'fun_fact' => 'A big mug means fewer trips to the kitchen.',
                 ],
                 'associations' => ['accessory' => ['ST-5004'], 'alternative' => ['MG-4001']],
+                'variants' => [
+                    ['code' => 'MG-4002-NAV', 'title' => 'Coffee Compiler Mug, Navy', 'image' => 'coffee-compiler-mug-navy.jpg', 'attributes' => ['colour' => 'navy']],
+                    ['code' => 'MG-4002-WHI', 'title' => 'Coffee Compiler Mug, White', 'image' => 'coffee-compiler-mug-white.jpg', 'attributes' => ['colour' => 'white']],
+                ],
             ],
             [
                 'code' => 'MG-4003',
