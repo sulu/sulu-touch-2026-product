@@ -105,3 +105,7 @@ sulu_custom_url_api:
 sulu_product_api:
     resource: "@SuluProductBundle/config/routing_admin_api.yaml"
     prefix: /admin/api
+
+sulu_content_api:
+    resource: "@SuluContentBundle/config/routing_admin_api.yaml"
+    prefix: /admin/api
