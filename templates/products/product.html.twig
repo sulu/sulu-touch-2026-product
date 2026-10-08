@@ -46,4 +46,17 @@
             {% endfor %}
         </div>
     </article>
+
+    {% for type, label in {accessory: 'Goes well with', alternative: 'Alternatives'} %}
+        {% if product.associations[type]|default([])|length %}
+            <section class="mx-auto max-w-6xl px-6 pb-12">
+                <h2 class="mb-4 text-2xl font-bold">{{ label }}</h2>
+                <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+                    {% for item in product.associations[type] %}
+                        {% include 'products/_card.html.twig' %}
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+    {% endfor %}
 {% endblock %}
