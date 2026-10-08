@@ -1,0 +1,407 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Sulu Touch 2026 cheatsheets</title><style>
+@page { size: A4; margin: 14mm 14mm; }
+* { box-sizing: border-box; }
+body { font: 10.5pt/1.4 -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; color: #1a2b4e; margin: 0; }
+section { page-break-after: always; break-after: page; min-height: 250mm; }
+section:last-child { page-break-after: auto; }
+h1 { font-size: 20pt; margin: 0 0 4mm; border-bottom: 3px solid #3f6e77; padding-bottom: 2mm; }
+h2 { font-size: 11pt; text-transform: uppercase; letter-spacing: .08em; color: #3f6e77; margin: 5mm 0 1.5mm; }
+p { margin: 1.5mm 0; }
+ul { margin: 1mm 0; padding-left: 5mm; }
+li { margin: .8mm 0; }
+code { font: 9pt/1.3 ui-monospace, Menlo, monospace; background: #eef2f3; padding: 0 1mm; }
+pre { background: #f2f4f5; border-left: 3px solid #3f6e77; padding: 2mm 3mm; margin: 2mm 0; white-space: pre-wrap; word-break: break-word; }
+pre code { background: none; padding: 0; font-size: 8.6pt; }
+blockquote { margin: 2mm 0; padding: 1mm 3mm; border-left: 3px solid #e0a526; background: #fbf5e6; }
+pre { position: relative; }
+.copy { position: absolute; top: 6px; right: 6px; font: 600 12px/1 -apple-system, sans-serif; color: #fff; background: #3f6e77; border: 0; border-radius: 4px; padding: 5px 9px; cursor: pointer; }
+.copy.done { background: #112a46; }
+@media screen {
+    body { max-width: 920px; margin: 0 auto; padding: 32px 40px 80px; font-size: 15px; background: #fff; }
+    html { background: #dce5e4; }
+    section { min-height: 0; padding: 28px 0 36px; border-bottom: 1px solid #c9d4d3; }
+    pre { padding: 12px 70px 12px 14px; }
+    pre code { font-size: 13px; }
+}
+@media print { .copy { display: none; } }
+</style></head><body><section><h1>Step 0: The empty skeleton</h1>
+<p><strong>Branch</strong> <code>step-00-skeleton</code></p>
+<p><strong>Goal</strong> Show where we start: a fresh Sulu 3.1 skeleton.</p>
+<h2>Do</h2>
+<pre><code class="language-bash">bin/stand 0
+</code></pre>
+<h2>Show</h2>
+<ul>
+<li>The admin has no &quot;Products&quot; entry yet.</li>
+</ul>
+<h2>If it goes wrong</h2>
+<p>Typos: <code>git checkout -f step-00-skeleton</code> (instant, keeps the data). Stuck: <code>bin/stand 0 force</code> (the finished step with its data, about 30 seconds).</p>
+</section>
+<section><h1>Step 1: Install and configure the bundle</h1>
+<p><strong>Branch</strong> <code>step-01-install</code></p>
+<p><strong>Goal</strong> Install the product bundle with three small changes and one config file.</p>
+<h2>Do</h2>
+<pre><code class="language-bash">composer require sulu/product-bundle:3.0.x-dev
+</code></pre>
+<p>What it takes. On stage the Live block, no download.</p>
+<p><code>config/bundles.php</code></p>
+<pre><code class="language-php">Sulu\Product\Infrastructure\Symfony\HttpKernel\SuluProductBundle::class =&gt; ['all' =&gt; true],
+</code></pre>
+<p><code>config/routes/sulu_admin.yaml</code></p>
+<pre><code class="language-yaml">sulu_product_api:
+    resource: &quot;@SuluProductBundle/config/routing_admin_api.yaml&quot;
+    prefix: /admin/api
+</code></pre>
+<p><code>config/packages/sulu_product.yaml</code></p>
+<pre><code class="language-yaml">sulu_product:
+    default_main_webspace: website
+    association_types:
+        accessory: { label: 'Goes well with' }
+        alternative: { label: 'Alternatives' }
+    measurements:
+        weight: { units: [GRAM, KILOGRAM] }
+        temperature: { units: [CELSIUS] }
+        volume: ~   # every volume unit
+</code></pre>
+<p>The admin build is done before the talk and committed in <code>public/build/admin</code> (<code>npm install &amp;&amp; npm run build</code> in <code>assets/admin</code>). Never on stage: a local build does not match the installed Sulu.</p>
+<pre><code class="language-bash">bin/adminconsole sulu:build dev
+</code></pre>
+<p>New <code>pr_*</code> tables and product rights for the admin role. On stage <code>bin/data 1</code> does it.</p>
+<h2>Live</h2>
+<p>The code of this step on top of the previous step, so the IDE shows exactly its changes; then its packages, assets and data:</p>
+<pre><code class="language-bash">git checkout -q -f step-00-skeleton &amp;&amp; git checkout step-01-install -- .
+bin/data 1
+</code></pre>
+<h2>Show</h2>
+<ul>
+<li>Admin menu: Products, Attributes, Attribute groups, Product families.</li>
+<li><code>sulu:build dev</code> AFTER the install: the admin role only gets product rights when it is created.</li>
+</ul>
+<h2>If it goes wrong</h2>
+<p>Typos: <code>git checkout -f step-01-install</code> (instant, keeps the data). Stuck: <code>bin/stand 1 force</code> (the finished step with its data, about 30 seconds).</p>
+</section>
+<section><h1>Step 2: The catalogue as data</h1>
+<p><strong>Branch</strong> <code>step-02-catalogue-data</code></p>
+<p><strong>Goal</strong> Explain the entities with real data: group, attributes, families, products.</p>
+<h2>Do</h2>
+<p><code>src/Catalogue/CatalogueData.php</code> (prepared, not typed)</p>
+<pre><code class="language-php">'colour' =&gt; [
+    'type' =&gt; 'options', 'name' =&gt; 'Colour', 'group' =&gt; 'Look', 'filterable' =&gt; true,
+    'options' =&gt; ['teal' =&gt; 'Teal', 'mustard' =&gt; 'Mustard', 'black' =&gt; 'Black'],
+],
+'weight' =&gt; ['type' =&gt; 'number', 'name' =&gt; 'Weight', 'group' =&gt; 'Specs', 'config' =&gt; ['unit' =&gt; 'GRAM']],
+// families
+'clothing' =&gt; ['name' =&gt; 'Clothing', 'attributes' =&gt; [
+    'material' =&gt; ['required' =&gt; true],
+    'colour' =&gt; ['variant' =&gt; true],
+    'size' =&gt; ['variant' =&gt; true],
+]],
+// products
+['code' =&gt; 'TS-1001', 'family' =&gt; 'clothing', 'title' =&gt; 'Hello World T-Shirt',
+ 'image' =&gt; 'hello-world-t-shirt-teal.jpg', 'attributes' =&gt; ['material' =&gt; 'organic-cotton', 'weight' =&gt; 180], ...],
+</code></pre>
+<pre><code class="language-bash">vendor/bin/phpunit
+</code></pre>
+<p>The test checks 27 products: every family, attribute, association and picture exists.</p>
+<h2>Live</h2>
+<p>The code of this step on top of the previous step, so the IDE shows exactly its changes; then its packages, assets and data:</p>
+<pre><code class="language-bash">git checkout -q -f step-01-install &amp;&amp; git checkout step-02-catalogue-data -- .
+bin/data 2
+</code></pre>
+<h2>Show</h2>
+<ul>
+<li>Five attribute types: text, number with a unit, date, options, boolean (yes or no).</li>
+<li>Booleans here: <code>limited_edition</code> (filterable) and <code>dishwasher_safe</code>.</li>
+<li>27 products, 41 photos in <code>data/images/</code>. Nothing is in the database yet.</li>
+</ul>
+<h2>If it goes wrong</h2>
+<p>Typos: <code>git checkout -f step-02-catalogue-data</code> (instant, keeps the data). Stuck: <code>bin/stand 2 force</code> (the finished step with its data, about 30 seconds).</p>
+</section>
+<section><h1>Step 3: Import with a console command</h1>
+<p><strong>Branch</strong> <code>step-03-import-command</code></p>
+<p><strong>Goal</strong> Load the data with the same messages the admin uses.</p>
+<h2>Do</h2>
+<p><code>src/Command/ImportCatalogueCommand.php</code></p>
+<pre><code class="language-php">$created = $this-&gt;dispatch(new CreateProductMessage([
+    'locale'        =&gt; 'en',
+    'template'      =&gt; 'product',
+    'type'          =&gt; ProductInterface::TYPE_PRODUCT,
+    'productFamily' =&gt; $familyIds[$product['family']],
+    'code'          =&gt; $product['code'],
+    'title'         =&gt; $product['title'],
+    'attributes'    =&gt; $this-&gt;values($product['attributes'], $attributeIds),  // attribute uuid =&gt; value
+    'claim'         =&gt; $product['claim'],
+    'url'           =&gt; $this-&gt;url($product['title']),
+    'details'       =&gt; ['image' =&gt; ['id' =&gt; $this-&gt;image($product['image'], $product['title'])]],
+]));
+
+$this-&gt;dispatch(new ApplyWorkflowTransitionProductMessage(['uuid' =&gt; $uuid], 'en', 'publish'));
+</code></pre>
+<pre><code class="language-bash">bin/adminconsole app:import-catalogue
+</code></pre>
+<p>About a minute.</p>
+<h2>Live</h2>
+<p>The code of this step on top of the previous step, so the IDE shows exactly its changes; then its packages, assets and data:</p>
+<pre><code class="language-bash">git checkout -q -f step-02-catalogue-data &amp;&amp; git checkout step-03-import-command -- .
+bin/adminconsole app:import-catalogue
+bin/data 3
+</code></pre>
+<p>Run the import while the database is still empty, talk for a few seconds, then Ctrl+C: <code>bin/data 3</code> loads the complete data. Run again on full data, the import only says &quot;The catalogue is already imported.&quot;</p>
+<h2>Show</h2>
+<ul>
+<li>No preview and no product page yet: the Twig template comes in step 4 (&quot;Page does not exist in html format&quot;). Use it as the bridge to step 4.</li>
+<li>Admin: Products list, open one: Details (attributes), Content, SEO.</li>
+<li>Start the import first and talk while it runs.</li>
+</ul>
+<h2>If it goes wrong</h2>
+<p>Typos: <code>git checkout -f step-03-import-command</code> (instant, keeps the data). Stuck: <code>bin/stand 3 force</code> (the finished step with its data, about 30 seconds).</p>
+</section>
+<section><h1>Step 4: The product page</h1>
+<p><strong>Branch</strong> <code>step-04-product-page</code></p>
+<p><strong>Goal</strong> Render a product on the website with Tailwind and Stimulus.</p>
+<h2>Do</h2>
+<pre><code class="language-bash">composer require symfony/asset-mapper symfony/stimulus-bundle symfony/ux-turbo symfonycasts/tailwind-bundle
+bin/websiteconsole importmap:install
+bin/websiteconsole tailwind:build
+</code></pre>
+<p><code>templates/products/product.html.twig</code></p>
+<pre><code class="language-twig">{% set groups = product.attributes|sulu_product_attribute_groups %}
+
+&lt;h1&gt;{{ content.headline }}&lt;/h1&gt;
+&lt;p&gt;{{ content.claim }}&lt;/p&gt;
+
+{% for group in groups %}
+    &lt;h2&gt;{{ group.label }}&lt;/h2&gt;
+    {% for attribute in group.attributes %}
+        {{ attribute.label }}: {{ attribute.formattedValue }}
+    {% endfor %}
+{% endfor %}
+</code></pre>
+<h2>Live</h2>
+<p>The code of this step on top of the previous step, so the IDE shows exactly its changes; then its packages, assets and data:</p>
+<pre><code class="language-bash">git checkout -q -f step-03-import-command &amp;&amp; git checkout step-04-product-page -- .
+bin/data 4
+</code></pre>
+<h2>Show</h2>
+<ul>
+<li>Every picture has a small &quot;AI&quot; badge in the top right corner (<code>templates/products/_image.html.twig</code>): it reads the media's <code>origin</code>, the disclosure text is the tooltip.</li>
+<li><code>/products/hello-world-t-shirt</code>: unit (&quot;180 g&quot;), date and option labels come formatted.</li>
+<li>A boolean comes as a real <code>true</code> or <code>false</code> in <code>formattedValue</code>: the template prints Yes or No.  Example: a mug says &quot;Dishwasher safe: Yes&quot;.</li>
+</ul>
+<h2>If it goes wrong</h2>
+<p>Typos: <code>git checkout -f step-04-product-page</code> (instant, keeps the data). Stuck: <code>bin/stand 4 force</code> (the finished step with its data, about 30 seconds).</p>
+</section>
+<section><h1>Step 5: Associations</h1>
+<p><strong>Branch</strong> <code>step-05-associations</code></p>
+<p><strong>Goal</strong> Show accessories and alternatives on the product page, and show how little it takes to change what is resolved.</p>
+<h2>Do</h2>
+<p><code>config/forms/product_associations.xml</code></p>
+<pre><code class="language-xml">&lt;property name=&quot;associations/accessory&quot; type=&quot;product_selection&quot;&gt;
+    &lt;meta&gt;&lt;title lang=&quot;en&quot;&gt;Goes well with&lt;/title&gt;&lt;/meta&gt;
+    &lt;params&gt;
+        &lt;param name=&quot;properties&quot; type=&quot;collection&quot;&gt;
+            &lt;param name=&quot;headline&quot; value=&quot;headline&quot;/&gt;
+            &lt;param name=&quot;claim&quot; value=&quot;claim&quot;/&gt;
+            &lt;param name=&quot;image&quot; value=&quot;image&quot;/&gt;
+        &lt;/param&gt;
+    &lt;/params&gt;
+&lt;/property&gt;
+</code></pre>
+<p><code>templates/products/product.html.twig</code></p>
+<pre><code class="language-twig">{% for item in product.associations.accessory %}
+    {% include 'products/_card.html.twig' %}
+{% endfor %}
+</code></pre>
+<p><code>templates/products/_card.html.twig</code></p>
+<pre><code class="language-twig">&lt;h3&gt;{{ item.headline }}&lt;/h3&gt;
+&lt;p&gt;{{ item.claim }}&lt;/p&gt;
+&lt;img src=&quot;{{ item.image.thumbnails['product-card'] }}&quot;&gt;
+</code></pre>
+<p><strong>Live change:</strong> delete the <code>claim</code> line, reload: the claim is gone from the cards. Add it again.
+Now add <code>&lt;param name=&quot;code&quot; value=&quot;code&quot;/&gt;</code> and print <code>{{ item.code }}</code> in the card.</p>
+<h2>Live</h2>
+<p>The code of this step on top of the previous step, so the IDE shows exactly its changes; then its packages, assets and data:</p>
+<pre><code class="language-bash">git checkout -q -f step-04-product-page &amp;&amp; git checkout step-05-associations -- .
+bin/data 5
+</code></pre>
+<h2>Show</h2>
+<ul>
+<li><code>/products/hello-world-t-shirt</code>: &quot;Goes well with&quot; and &quot;Alternatives&quot; under the product.</li>
+<li>Admin: the Associations tab of the same product.</li>
+</ul>
+<h2>If it goes wrong</h2>
+<p>Typos: <code>git checkout -f step-05-associations</code> (instant, keeps the data). Stuck: <code>bin/stand 5 force</code> (the finished step with its data, about 30 seconds).</p>
+</section>
+<section><h1>Step 6: Colour and size variants</h1>
+<p><strong>Branch</strong> <code>step-06-variants</code></p>
+<p><strong>Goal</strong> One product, many variants: each with its own URL, colour, size and photo.</p>
+<h2>Do</h2>
+<p><code>src/Catalogue/CatalogueData.php</code> (prepared)</p>
+<pre><code class="language-php">'variants' =&gt; [
+    ['code' =&gt; 'TS-1001-TEA-M', 'title' =&gt; 'Hello World T-Shirt, Teal, M',
+     'image' =&gt; 'hello-world-t-shirt-teal.jpg', 'attributes' =&gt; ['colour' =&gt; 'teal', 'size' =&gt; 'm']],
+],
+</code></pre>
+<p><code>config/packages/sulu_product.yaml</code></p>
+<pre><code class="language-yaml">sulu_product:
+    variants:
+        properties:
+            attributes: product.attributes
+</code></pre>
+<p><code>templates/products/product.html.twig</code></p>
+<pre><code class="language-twig">{% set variant = product.currentVariant|default(null) %}
+{% set image = variant.image|default(product.image) %}
+
+{% for option in product.variants %}
+    &lt;a href=&quot;{{ sulu_content_path(option.url) }}&quot;&gt;
+        {{ option.attributes.colour|sulu_product_format_attribute_value }}
+    &lt;/a&gt;
+{% endfor %}
+</code></pre>
+<p><code>config/forms/product_associations.xml</code> (a product with variants has no URL, so cards link to its first variant)</p>
+<pre><code class="language-xml">&lt;param name=&quot;variants&quot; value=&quot;product.variants&quot;/&gt;
+</code></pre>
+<p><code>templates/products/_card.html.twig</code></p>
+<pre><code class="language-twig">{% set url = item.url|default((item.variants|default([])|first).url|default(null)) %}
+</code></pre>
+<pre><code class="language-bash"></code></pre>
+<p>The code of this step on top of the previous step, so the IDE shows exactly its changes; then its packages, assets and data:</p>
+<pre><code class="language-bash">git checkout -q -f step-05-associations &amp;&amp; git checkout step-06-variants -- .
+bin/data 6
+</code></pre>
+<h2>Show</h2>
+<ul>
+<li><code>/products/hello-world-t-shirt-teal-m</code> works, <code>/products/hello-world-t-shirt</code> does not.</li>
+<li>Click a colour: the photo changes. Click a size: the URL changes.</li>
+</ul>
+<h2>If it goes wrong</h2>
+<p>Typos: <code>git checkout -f step-06-variants</code> (instant, keeps the data). Stuck: <code>bin/stand 6 force</code> (the finished step with its data, about 30 seconds).</p>
+</section>
+<section><h1>Step 7: Overview page with filters and search</h1>
+<p><strong>Branch</strong> <code>step-07-catalogue-search</code></p>
+<p><strong>Goal</strong> A catalogue page with filters and a search box. The URL is the whole state.</p>
+<h2>Do</h2>
+<p><code>config/packages/sulu_product.yaml</code></p>
+<pre><code class="language-yaml">sulu_product:
+    search:
+        website:
+            additional_product_filters: true
+</code></pre>
+<p><code>src/Controller/Website/CatalogueController.php</code></p>
+<pre><code class="language-php">$search = $this-&gt;engine-&gt;createSearchBuilder('website')
+    -&gt;addFilter(Condition::equal('resourceKey', 'product'))
+    -&gt;addFilter(Condition::equal('locale', $locale));
+
+$search-&gt;addFilter(Condition::search($term));
+$search-&gt;addFilter(Condition::in('product.attributes_text_values', ['colour:teal']));
+</code></pre>
+<p><code>assets/website/controllers/catalogue_filter_controller.js</code></p>
+<pre><code class="language-js">export default class extends Controller {
+    static targets = ['form'];
+    submit() { this.formTarget.requestSubmit(); }
+}
+</code></pre>
+<h2>Live</h2>
+<p>The code of this step on top of the previous step, so the IDE shows exactly its changes; then its packages, assets and data:</p>
+<pre><code class="language-bash">git checkout -q -f step-06-variants &amp;&amp; git checkout step-07-catalogue-search -- .
+bin/data 7
+</code></pre>
+<h2>Show</h2>
+<ul>
+<li><code>/products</code>: tick Teal, then Hoodie sizes M. The list changes.</li>
+<li>Tick &quot;Limited edition: Yes&quot;: 6 products. A filterable boolean is one &quot;Yes&quot; checkbox, stored as <code>limited_edition:true</code> in the index.</li>
+<li>Type a typo, &quot;hodie&quot;: Loupe still finds the hoodies. Elasticsearch does not out of the box.</li>
+<li>After a NEW filterable attribute: <code>cache:clear</code> and <code>cmsig:seal:reindex --index website --drop</code>.</li>
+</ul>
+<h2>If it goes wrong</h2>
+<p>Typos: <code>git checkout -f step-07-catalogue-search</code> (instant, keeps the data). Stuck: <code>bin/stand 7 force</code> (the finished step with its data, about 30 seconds). Never <code>bin/reset-demo</code> on stage: about 2 minutes.</p>
+</section>
+<section><h1>Step 8: An AI client manages products (MCP)</h1>
+<p><strong>Branch</strong> <code>step-08-mcp</code></p>
+<p><strong>Goal</strong> Let an AI create a draft product, with the rights of a Sulu user.</p>
+<h2>Do</h2>
+<pre><code class="language-bash">composer require sulu/mcp-bundle:1.0.x-dev
+</code></pre>
+<p><code>config/packages/sulu_mcp.yaml</code></p>
+<pre><code class="language-yaml">sulu_mcp:
+    dangerous_tools:
+        product_write: true      # create and update drafts; publish stays off
+</code></pre>
+<pre><code class="language-bash">NODE_EXTRA_CA_CERTS=~/.symfony5/certs/default.crt \
+  claude mcp add --transport http sulu https://127.0.0.1:48400/admin/mcp
+</code></pre>
+<p><strong>Prompt</strong></p>
+<blockquote>
+<p>Create the sticker &quot;Rubber Duck Sticker&quot; (code ST-9001) in the family Accessories, made of vinyl, a limited edition, with the URL /products/rubber-duck-sticker and the main webspace website, as a draft.</p>
+</blockquote>
+<h2>Live</h2>
+<p>The code of this step on top of the previous step, so the IDE shows exactly its changes; then its packages, assets and data:</p>
+<pre><code class="language-bash">git checkout -q -f step-07-catalogue-search &amp;&amp; git checkout step-08-mcp -- .
+bin/data 8
+</code></pre>
+<h2>Show</h2>
+<ul>
+<li>Login as <code>ai-editor</code> / <code>ai-editor</code>, then the consent screen.</li>
+<li>Name the URL and the webspace in the prompt: the tool sets neither by itself.</li>
+<li><code>ai-editor</code> may view the webspace <code>website</code> (role permission <code>sulu.webspaces.website</code>), otherwise the admin preview fails.</li>
+<li>Before the talk: <code>config/routes.yaml</code> imports only <code>App\Controller</code>, and <code>bin/reset-demo</code> has made the JWT keys (<code>config/jwt/</code>, not in git).</li>
+</ul>
+<h2>If it goes wrong</h2>
+<p>Show a recording of the same prompt. Typos: <code>git checkout -f step-08-mcp</code> (instant, keeps the data). Stuck: <code>bin/stand 8 force</code> (about 30 seconds).</p>
+</section>
+<section><h1>Step 9: Request for publishing</h1>
+<p><strong>Branch</strong> <code>step-09-review-workflow</code></p>
+<p><strong>Goal</strong> A product needs a review before it goes live. This is only configuration.</p>
+<h2>Do</h2>
+<p><code>config/packages/sulu_content.yaml</code></p>
+<pre><code class="language-yaml">sulu_content:
+    request_workflows:
+        default:
+            resources: [products]
+            required_user_approvals: 1
+            pre_validators:
+                seo_required: { fields: [title, description] }
+</code></pre>
+<p><code>config/routes/sulu_admin.yaml</code></p>
+<pre><code class="language-yaml">sulu_content_api:
+    resource: &quot;@SuluContentBundle/config/routing_admin_api.yaml&quot;
+    prefix: /admin/api
+</code></pre>
+<p>The product bundle already ties the review permission to <code>sulu.product.products</code>, so no security config is needed.</p>
+<p><strong>Flow:</strong> ai-editor &quot;Save and request for publish&quot; (SEO empty: refused) → fill SEO → request → locked → admin &quot;Review&quot;, &quot;Approve&quot; → ai-editor &quot;Publish&quot;.</p>
+<h2>Live</h2>
+<p>The code of this step on top of the previous step, so the IDE shows exactly its changes; then its packages, assets and data:</p>
+<pre><code class="language-bash">git checkout -q -f step-08-mcp &amp;&amp; git checkout step-09-review-workflow -- .
+bin/data 9
+</code></pre>
+<h2>Show</h2>
+<ul>
+<li>The button is on the Content, SEO and Excerpt tabs, not on Details.</li>
+<li>As admin the Review button shows after a page reload; open the product's Content tab fresh.</li>
+</ul>
+<h2>If it goes wrong</h2>
+<p>Typos: <code>git checkout -f step-09-review-workflow</code> (instant, keeps the data). Stuck: <code>bin/stand 9 force</code> (the finished step with its data, about 30 seconds).</p>
+</section><script>
+document.querySelectorAll('pre').forEach(pre => {
+    const button = document.createElement('button');
+    button.className = 'copy';
+    button.textContent = 'Copy';
+    button.addEventListener('click', async () => {
+        const text = pre.querySelector('code') ? pre.querySelector('code').innerText : pre.innerText;
+        try {
+            await navigator.clipboard.writeText(text);
+        } catch (e) {
+            const area = document.createElement('textarea');
+            area.value = text;
+            document.body.appendChild(area);
+            area.select();
+            document.execCommand('copy');
+            area.remove();
+        }
+        button.textContent = 'Copied';
+        button.classList.add('done');
+        setTimeout(() => { button.textContent = 'Copy'; button.classList.remove('done'); }, 1500);
+    });
+    pre.appendChild(button);
+});
+</script></body></html>
