@@ -1,0 +1,14 @@
+sulu_product:
+    # the webspace a product belongs to unless the editor picks another one in its settings
+    default_main_webspace: website
+
+    # without at least one type the "Associations" tab stays hidden
+    association_types:
+        accessory: { label: 'Goes well with' }   # without a label the admin shows the translation key
+        alternative: { label: 'Alternatives' }
+
+    # the units the number type offers; without this section all 17 measurement families are on
+    measurements:
+        weight: { units: [GRAM, KILOGRAM] }
+        temperature: { units: [CELSIUS] }
+        volume: ~   # every volume unit
