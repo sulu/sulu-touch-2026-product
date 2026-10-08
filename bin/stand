@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# Usage: bin/stand <0-9> [force|smoke]
+# Switches the checkout to one step, installs, loads the data of the step and starts the server if none runs.
+# The first switch to a step imports its data (up to two minutes) and saves it with bin/data;
+# every later switch loads the saved data in seconds. `force` drops changes you typed; `smoke` imports and checks.
+# Every step branch carries this script unchanged, so switching does not rewrite it.
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+n=$(printf '%02d' "$((10#${1:?usage: bin/stand <0-9> [force|smoke]}))")
+mode=${2:-}
+# a fresh clone has only one local branch, so look at the remote ones too
+branch=$(git for-each-ref --format='%(refname:short)' "refs/heads/step-$n-*" "refs/remotes/origin/step-$n-*" | head -1)
+branch=${branch#origin/}
+[ -n "$branch" ] || { echo "no branch for step $n"; exit 1; }
+
+if [ "$mode" = force ]; then
+    git checkout -q -f "$branch"
+else
+    # untracked files such as assets/vendor do not matter, only changes to tracked files do
+    [ -z "$(git status --porcelain --untracked-files=no)" ] || { echo "working tree is dirty: bin/stand $1 force drops the changes"; exit 1; }
+    git checkout -q "$branch"
+fi
+# the install costs about ten seconds, so it runs only when composer.lock changed since the last one
+cmp -s composer.lock vendor/.installed-lock 2>/dev/null || { composer install -q --no-interaction && cp composer.lock vendor/.installed-lock; }
+if [ -f importmap.php ]; then
+    bin/websiteconsole importmap:install >/dev/null   # needs the network the first time
+    bin/websiteconsole tailwind:build >/dev/null
+fi
+
+if [ "$mode" = smoke ]; then
+    bin/smoke   # resets the data and starts the server itself
+    exit
+fi
+
+# the server that runs now comes back on the same port and scheme (bin/reset-demo stops it);
+# `symfony server:status` exits 0 also when nothing runs, so look for the address
+server_url() { symfony server:status 2>/dev/null | grep -o 'https\?://127.0.0.1:[0-9]*' | head -1 || true; }
+running=$(server_url)
+
+if bin/data "$1" exists; then
+    bin/data "$1" >/dev/null
+else
+    # the reset talks a lot; keep it in a log and show its end only when it fails
+    mkdir -p var/log && bin/reset-demo > var/log/stand.log 2>&1 || { tail -20 var/log/stand.log; exit 1; }
+    bin/data "$1" save
+fi
+if [ -z "$(server_url)" ]; then
+    case $running in
+        https://*) args="--port=${running##*:}" ;;
+        http://*) args="--no-tls --port=${running##*:}" ;;
+        *) args=${SERVER_ARGS:---no-tls --port=8123} ;;
+    esac
+    symfony server:start -d $args >/dev/null 2>&1 </dev/null
+fi
+
+echo "== $branch ($(git rev-parse --short HEAD))"
+echo "$(server_url)/  (admin: /admin, admin / admin)"

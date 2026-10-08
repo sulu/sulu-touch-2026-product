@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+# Usage: bin/data <0-9> [save|exists]
+# Loads the packages, assets and saved data (database, uploads, search index) of a step and leaves the code alone,
+# so code checked out or typed live gets the data of its step. `save` stores the current data as the data of that step.
+# The data lives in var/snapshots/; the first load of a step imports it and saves it.
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+n=$(printf '%02d' "$((10#${1:?usage: bin/data <0-9> [save|exists]}))")
+branch=$(git for-each-ref --format='%(refname:short)' "refs/heads/step-$n-*" "refs/remotes/origin/step-$n-*" | head -1)
+[ -n "$branch" ] || { echo "no branch for step $n"; exit 1; }
+# keyed by the files that shape the data (src/, data/, config/), so template, asset and script changes keep it
+snapshot=var/snapshots/$(git ls-tree -r "$branch" -- src data config | git hash-object --stdin | cut -c1-12)
+files="var/uploads var/indexes public/uploads/media"
+
+# the database of DATABASE_URL (.env.local wins over .env)
+url=$(grep -h '^DATABASE_URL=' .env.local .env 2>/dev/null | head -1 | cut -d= -f2- | tr -d '"')
+[[ $url =~ ^mysql://([^:]*):([^@]*)@([^:/]*):?([0-9]*)/([^?]*) ]] || { echo "cannot read DATABASE_URL"; exit 1; }
+user=${BASH_REMATCH[1]} host=${BASH_REMATCH[3]} port=${BASH_REMATCH[4]:-3306} name=${BASH_REMATCH[5]}
+export MYSQL_PWD=${BASH_REMATCH[2]}
+
+if [ "${2:-}" = save ]; then
+    mkdir -p "$snapshot"
+    mysqldump -h "$host" -P "$port" -u "$user" --single-transaction --no-tablespaces "$name" > "$snapshot/db.sql"
+    existing=$(ls -d $files 2>/dev/null || true)
+    tar -cf "$snapshot/files.tar" ${existing:--T /dev/null}
+    exit
+fi
+
+# packages and assets follow the code that is checked out now: the install runs only when composer.lock changed
+if [ "${2:-}" != exists ] && [ "${2:-}" != save ]; then
+    cmp -s composer.lock vendor/.installed-lock 2>/dev/null || { composer install -q --no-interaction && cp composer.lock vendor/.installed-lock; }
+    if [ -f importmap.php ]; then
+        bin/websiteconsole importmap:install >/dev/null
+        bin/websiteconsole tailwind:build >/dev/null 2>&1
+    fi
+fi
+
+if [ "${2:-}" = exists ]; then
+    [ -f "$snapshot/db.sql" ]
+    exit
+fi
+# `symfony server:status` exits 0 also when nothing runs, so look for the address
+server_url() { symfony server:status 2>/dev/null | grep -o 'https\?://127.0.0.1:[0-9]*' | head -1 || true; }
+running=$(server_url)
+
+if [ ! -f "$snapshot/db.sql" ]; then
+    # nothing saved yet: build the data from the code as it is now (the step after the Live checkout), the slow way
+    echo "no saved data for step $n yet: importing, up to two minutes, then saved for next time"
+    mkdir -p var/log && bin/reset-demo > var/log/stand.log 2>&1 || { tail -20 var/log/stand.log; exit 1; }
+    "$0" "$1" save
+else
+    mysql -h "$host" -P "$port" -u "$user" -e "DROP DATABASE IF EXISTS \`$name\`; CREATE DATABASE \`$name\`"
+    mysql -h "$host" -P "$port" -u "$user" "$name" < "$snapshot/db.sql"
+    rm -rf $files
+    tar -xf "$snapshot/files.tar"
+    bin/adminconsole cache:clear >/dev/null
+    bin/websiteconsole cache:clear >/dev/null
+fi
+
+# the server runs afterwards in every case: on the address it had, or on the default when none ran
+if [ -z "$(server_url)" ]; then
+    case $running in
+        https://*) args="--port=${running##*:}" ;;
+        http://*) args="--no-tls --port=${running##*:}" ;;
+        *) args=${SERVER_ARGS:---no-tls --port=8123} ;;
+    esac
+    symfony server:start -d $args >/dev/null 2>&1 </dev/null
+fi
+echo "== data of $branch loaded: $(server_url)/"

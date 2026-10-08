@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# Smoke test of the checked out step: resets the data, starts the server and checks what this step brings.
+set -uo pipefail
+cd "$(dirname "$0")/.."
+
+BASE=${BASE:-http://127.0.0.1:8123}
+FAILED=0
+ok()    { echo "  ok    $1"; }
+fail()  { echo "  FAIL  $1"; FAILED=1; }
+code()  { curl -sk -o /dev/null -w '%{http_code}' "$BASE$1"; }
+page()  { curl -sk "$BASE$1"; }
+check() { if eval "$2" >/dev/null 2>&1; then ok "$1"; else fail "$1"; fi; }
+
+echo "== $(git rev-parse --abbrev-ref HEAD)"
+RESET=$(bin/reset-demo 2>&1) && ok "reset: schema, users$([ -f src/Command/ImportCatalogueCommand.php ] && echo ', catalogue, index')" || { fail "reset"; echo "$RESET" | tail -5; exit 1; }
+symfony server:start -d ${SERVER_ARGS:---no-tls --port=8123} >/dev/null 2>&1 || true
+
+check "GET / is 200" '[ "$(code /)" = 200 ]'
+check "GET /admin/ is 200" '[ "$(code /admin/)" = 200 ]'
+
+# step 2: the data
+if [ -f tests/CatalogueDataTest.php ]; then
+    check "the data is complete (phpunit)" 'vendor/bin/phpunit'
+fi
+
+# step 3: the import
+if [ -f src/Command/ImportCatalogueCommand.php ]; then
+    check "import: 13 attributes, 2 families, 27 products" '[[ "$RESET" == *"Imported 13 attributes, 2 families and 27 products"* ]]'
+fi
+
+# step 4: the product page. With variants only a variant has a URL.
+if [ -f templates/products/product.html.twig ]; then
+    if grep -q "'variants'" src/Catalogue/CatalogueData.php; then URL=/products/hello-world-t-shirt-teal-m; else URL=/products/hello-world-t-shirt; fi
+    PRODUCT=$(page $URL)
+    check "GET $URL is 200" '[ "$(code $URL)" = 200 ]'
+    check "the product page shows the title and the attribute groups" '[[ "$PRODUCT" == *"Hello World T-Shirt"* && "$PRODUCT" == *"Look"* && "$PRODUCT" == *"Specs"* ]]'
+    check "the product page shows the AI badge" '[[ "$PRODUCT" == *"Image made with AI"* ]]'
+fi
+# step 5: associations
+if [ -f config/forms/product_associations.xml ]; then
+    check "the product page shows the associated products" '[[ "$PRODUCT" == *"Goes well with"* ]]'
+fi
+# step 6: variants
+if [ -n "${URL:-}" ] && grep -q "'variants'" src/Catalogue/CatalogueData.php; then
+    check "the product page has the colour and size switchers" '[[ "$PRODUCT" == *">Colour<"* && "$PRODUCT" == *">Size<"* ]]'
+fi
+# step 7: the catalogue
+if [ -f src/Controller/Website/CatalogueController.php ]; then
+    check "GET /products is 200 and lists products" '[[ "$(page /products)" == *" products</p>"* ]]'
+    check "a typo finds the hoodies (search)" '[[ "$(page "/products?q=hodie")" == *"Hoodie"* ]]'
+    check "a filter narrows the list" '[ "$(page "/products?f%5Bcolour%5D%5B%5D=teal" | grep -o "<h3 " | wc -l)" -lt "$(page /products | grep -o "<h3 " | wc -l)" ]'
+fi
+# step 8: the MCP server answers, and wants a login
+if [ -f config/packages/sulu_mcp.yaml ]; then
+    check "the MCP endpoint asks for a login (401)" '[ "$(curl -sk -o /dev/null -w "%{http_code}" -X POST -H "content-type: application/json" -d "{}" "$BASE/admin/mcp")" = 401 ]'
+    check "the editor ai-editor exists" 'bin/adminconsole list app --raw | grep -q "^app:create-ai-editor"'
+fi
+# step 9: the request workflow
+if grep -q request_workflows config/packages/*.yaml 2>/dev/null; then
+    check "the review workflow is configured" 'grep -rq request_workflows config/packages'
+fi
+
+[ $FAILED = 0 ] && echo "  all checks passed" || echo "  SOME CHECKS FAILED"
+exit $FAILED
