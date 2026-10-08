@@ -1,0 +1,3 @@
+title: Sulu Touch Shop
+description: A merch catalogue for developers, built step by step on the Sulu product bundle.
+exclude: [cheatsheets/*.md, assets/admin, assets/website, bin, config, data, migrations, public, src, templates, tests, translations, composer.json, composer.lock, symfony.lock, importmap.php, compose.yaml, compose.override.yaml, phpstan.dist.neon, phpunit.dist.xml, rector.php, LICENSE]

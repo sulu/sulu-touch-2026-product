@@ -1,70 +1,100 @@
-<br/>
-<p align="center">
-    <a href="https://sulu.io/" target="_blank">
-        <img width="50%" src="https://sulu.io/website/images/sulu.svg" alt="Sulu logo">
-    </a>
-</p>
+# Sulu Touch Shop
 
-<br/>
-<p align="center">
-    <a href="LICENSE" target="_blank">
-        <img src="https://img.shields.io/github/license/sulu/skeleton.svg" alt="GitHub license">
-    </a>
-    <a href="https://github.com/sulu/skeleton/releases" target="_blank">
-        <img src="https://img.shields.io/github/tag/sulu/skeleton.svg" alt="GitHub tag (latest SemVer)">
-    </a>
-    <a href="https://github.com/sulu/skeleton/actions" target="_blank">
-        <img src="https://img.shields.io/github/actions/workflow/status/sulu/skeleton/test-application.yaml" alt="Test workflow status">
-    </a>
-</p>
-<br/>
+The workshop repository of Sulu Touch 2026: a merch catalogue for developers, built step by step on the
+[Sulu product bundle](https://github.com/sulu/SuluProductBundle).
+Every step is one commit on its own branch and one pull request onto the step before; each branch is the finished state of its step.
 
-[Sulu](https://sulu.io/) is a highly extensible open-source **PHP content management system based** on the [Symfony](https://symfony.com/) framework. Sulu is developed to deliver robust **multi-lingual and multi-portal websites** while providing an **intuitive and extensible administration interface** to manage the full content lifecycle. 
+- **Slides** of the talk: [HTML](https://sulu.github.io/sulu-touch-2026-product/slides/talk.html), [PDF](slides/talk.pdf)
+- **Cheatsheets**, one page per step: [HTML](https://sulu.github.io/sulu-touch-2026-product/cheatsheets/cheatsheets.html), [PDF](cheatsheets/cheatsheets.pdf), Markdown in `cheatsheets/`
 
-Have a look at the official [Sulu website](https://sulu.io/) for a comprehensive list of Sulus features, core values and use cases. 
+![The Sulu Touch Shop](docs/images/home.jpg)
 
-<br/>
-<p align="center">
-    <img width="80%" src="https://sulu.io/uploads/media/800x@2x/07/167-ezgif.gif?v=2" alt="Sulu Slideshow">
-</p>
-<br/>
+## The product bundle in short
 
-This repository provides the recommended **project template for starting your new project based on the Sulu content management system**.
-The project template follows the best-practices of the [Symfony](https://symfony.com/) framework and builds upon tho official [symfony/skeleton](https://github.com/symfony/skeleton) template. In addition, it requires and configures the Sulu content management system core framework [sulu/sulu](https://github.com/sulu/sulu).
+- Products are content, like pages and articles: the same tabs (SEO, excerpt, URL, live preview) and the same lifecycle (draft, publish, versions, review).
+- It is not a shop system: no cart, no prices, no checkout. It presents products, and a shop or PIM can feed it.
+- Three types: a product, a product with variants, and a variant. A T-shirt holds the shared facts, each colour and size is a variant with its own photo and URL.
+- An attribute is one typed fact: text, number with a unit, date, option or yes/no.
+- A family decides which attributes a product has, and per attribute whether it is required and whether it varies per variant. Groups only arrange the attributes in the form and on the page.
+- Associations link products, for example "Goes well with" and "Alternatives".
+- An attribute marked filterable becomes a filter of the website search.
 
-If you want to **extend your already set up Sulu project**, visit the [Sulu organization](https://github.com/sulu) on GitHub for a complete list of official Sulu bundles.
+![The entity model](docs/images/entity-model.svg)
 
+## Tour
 
-## 🚀&nbsp; Installation and Documentation
+**Website**
 
-Starting a new Sulu project with the [sulu/skeleton](https://github.com/sulu/skeleton) template is as easy as executing the following [composer](https://getcomposer.org/) command: 
+The product page: colour and size switch between the variants, each with its own URL; the attributes come grouped from the family (step 6).
+
+![Product page with variant switch and attributes](docs/images/product-page.jpg)
+
+Associations resolved on the page: "Goes well with" and "Alternatives" (step 5).
+
+![Associations on the product page](docs/images/associations.jpg)
+
+The catalogue: search and filters built from the filterable attributes. The URL holds the whole state (step 7).
+
+![Catalogue with filters](docs/images/catalogue.jpg)
+
+**Admin**
+
+A product with the live preview next to the form (data from step 3, preview from step 4).
+
+![Product form with live preview](docs/images/admin-product.jpg)
+
+Its attributes, grouped as the family defines them (step 3).
+
+![Product attributes](docs/images/admin-attributes.jpg)
+
+The family "Clothing": colour and size are the variant attributes, material is required (step 3).
+
+![Product family](docs/images/admin-family.jpg)
+
+The variants of the product, one per colour and size (step 6).
+
+![Variants of a product](docs/images/admin-variants.jpg)
+
+**Review before going live**
+
+The AI editor of step 8 has no live permission. Its request locks the product until someone reviews it (step 9).
+
+![Product locked by a review request](docs/images/review-request.jpg)
+
+The reviewer approves or rejects. The review is configuration only, no code.
+
+![Review dialog](docs/images/review.jpg)
+
+## Start
+
+Requirements: PHP 8.2+, Composer, MySQL 8, the Symfony CLI. Set `DATABASE_URL` in `.env.local`.
 
 ```bash
-composer create-project sulu/skeleton my-project
+git clone https://github.com/sulu/sulu-touch-2026-product.git && cd sulu-touch-2026-product
+bin/stand 7          # step 7: switches the branch, installs, resets the data, starts the server
+bin/stand 7 smoke    # the same, then checks what the step brings
 ```
 
-Afterwards, visit the official [Sulu documentation](http://docs.sulu.io/en/latest/book/getting-started.html) to find out **how to initialize and configure your project** to your specific needs.
+The site runs at http://127.0.0.1:8123, the admin at http://127.0.0.1:8123/admin (`admin` / `admin`).
+The reset takes up to two minutes from step 3 on, because it imports the catalogue.
 
+## Steps
 
-## ❤️&nbsp; Community and Contributions
+| Step | Branch | What you get | Pull request |
+|---|---|---|---|
+| 0 | `step-00-skeleton` | Show where we start: a fresh Sulu 3.1 skeleton. | start |
+| 1 | `step-01-install` | Install the product bundle with three small changes and one config file. | [#1](https://github.com/sulu/sulu-touch-2026-product/pull/1) |
+| 2 | `step-02-catalogue-data` | Explain the entities with real data: group, attributes, families, products. | [#2](https://github.com/sulu/sulu-touch-2026-product/pull/2) |
+| 3 | `step-03-import-command` | Load the data with the same messages the admin uses. | [#3](https://github.com/sulu/sulu-touch-2026-product/pull/3) |
+| 4 | `step-04-product-page` | Render a product on the website with Tailwind and Stimulus. | [#4](https://github.com/sulu/sulu-touch-2026-product/pull/4) |
+| 5 | `step-05-associations` | Show accessories and alternatives on the product page, and show how little it takes to change what is resolved. | [#5](https://github.com/sulu/sulu-touch-2026-product/pull/5) |
+| 6 | `step-06-variants` | One product, many variants: each with its own URL, colour, size and photo. | [#6](https://github.com/sulu/sulu-touch-2026-product/pull/6) |
+| 7 | `step-07-catalogue-search` | A catalogue page with filters and a search box. The URL is the whole state. | [#7](https://github.com/sulu/sulu-touch-2026-product/pull/7) |
+| 8 | `step-08-mcp` | Let an AI create a draft product, with the rights of a Sulu user. | [#8](https://github.com/sulu/sulu-touch-2026-product/pull/8) |
+| 9 | `step-09-review-workflow` | A product needs a review before it goes live. This is only configuration. | [#9](https://github.com/sulu/sulu-touch-2026-product/pull/9) |
 
-The Sulu content management system is a **community-driven open source project** backed by various partner companies. We are committed to a fully transparent development process and **highly appreciate any contributions**. Whether you are helping us fixing bugs, proposing new feature, improving our documentation or spreading the word - **we would love to have you as part of the Sulu community**.
+See what a step changed: `git diff step-02-catalogue-data step-03-import-command`.
 
+## Check
 
-## 📫&nbsp; Have a question? Want to chat? Run into a problem?
-
-We are happy to welcome you in our official [Slack channel](https://sulu.io/services-and-support)! Obviously you can always **reach out to us directly** via the [Sulu twitter account](https://twitter.com/sulu) or post your question on [StackOverflow](https://stackoverflow.com/questions/tagged/sulu) with the official `sulu` tag.
-
-
-## 🤝&nbsp; Found a bug? Missing a specific feature?
-
-Feel free to **file a new issue** with a respective title and description on the the [sulu/sulu](https://github.com/sulu/sulu/issues) repository. If you already found a solution to your problem, **we would love to review your pull request**! Have a look at our [contribution guidelines](http://docs.sulu.io/en/latest/developer/contributing/) to find out about our coding standards.
-
-
-## ✅&nbsp; Requirements
-
-Sulu 2.6 requires a **PHP version higher or equal to 8.2** and is compatible with **Symfony version 5.4 - 7.4**. Have a look at the `require` section in the [composer.json](https://github.com/sulu/sulu/blob/2.6/composer.json) of the [sulu/sulu](https://github.com/sulu/sulu) core framework to find an **up-to-date list of the requirements** of Sulu content management system.
-
-
-## 📘&nbsp; License
-The Sulu content management system is released under the under terms of the [MIT License](LICENSE).
+- `bin/smoke`: resets the data of the checked out step and checks its pages.
