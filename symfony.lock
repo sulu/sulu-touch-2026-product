@@ -112,6 +112,19 @@
             "var/storage/.gitignore"
         ]
     },
+    "league/oauth2-server-bundle": {
+        "version": "1.2",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "1.2",
+            "ref": "374de24b3639ca6802e0b4f000fe2a56428f95a3"
+        },
+        "files": [
+            "config/packages/league_oauth2_server.yaml",
+            "config/routes/league_oauth2_server.yaml"
+        ]
+    },
     "massive/build-bundle": {
         "version": "0.6.0"
     },
@@ -189,6 +202,19 @@
         },
         "files": [
             "config/packages/stof_doctrine_extensions.yaml"
+        ]
+    },
+    "sulu/mcp-bundle": {
+        "version": "1.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "1.0",
+            "ref": "5c8da8c17e2a8976aac6614c4fbdbc3ce841eb06"
+        },
+        "files": [
+            "config/packages/sulu_mcp.yaml",
+            "config/routes/sulu_mcp.yaml"
         ]
     },
     "symfony-cmf/routing-bundle": {
@@ -289,6 +315,9 @@
         "files": [
             "config/packages/mailer.yaml"
         ]
+    },
+    "symfony/mcp-bundle": {
+        "version": "v0.13.0"
     },
     "symfony/messenger": {
         "version": "7.4",
