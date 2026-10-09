@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "20967632aab70fefd097f3aa6f373510",
+    "content-hash": "7e928a96850e09b68401654369e40c9c",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -5310,6 +5310,99 @@
                 "source": "https://github.com/sulu/messenger/tree/1.0.0"
             },
             "time": "2026-02-10T10:25:31+00:00"
+        },
+        {
+            "name": "sulu/product-bundle",
+            "version": "3.0.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sulu/SuluProductBundle.git",
+                "reference": "0fc4576e3499daf246a84f6e2d01ea1493eead4d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sulu/SuluProductBundle/zipball/0fc4576e3499daf246a84f6e2d01ea1493eead4d",
+                "reference": "0fc4576e3499daf246a84f6e2d01ea1493eead4d",
+                "shasum": ""
+            },
+            "require": {
+                "cmsig/seal": "^0.12",
+                "doctrine/collections": "^1.6 || ^2.0",
+                "doctrine/dbal": "^3.9 || ^4.0",
+                "doctrine/orm": "^2.17.3 || ^3.3",
+                "ext-filter": "*",
+                "ext-intl": "*",
+                "ext-mbstring": "*",
+                "php": "^8.2",
+                "sulu/messenger": "^1.0",
+                "sulu/sulu": "^3.1@dev",
+                "symfony/config": "^6.4 || ^7.1 || ^8.0",
+                "symfony/dependency-injection": "^6.4 || ^7.1 || ^8.0",
+                "symfony/event-dispatcher": "^6.4 || ^7.1 || ^8.0",
+                "symfony/http-foundation": "^6.4 || ^7.1 || ^8.0",
+                "symfony/http-kernel": "^6.4 || ^7.1 || ^8.0",
+                "symfony/messenger": "^6.4 || ^7.1 || ^8.0",
+                "symfony/routing": "^6.4 || ^7.1 || ^8.0",
+                "symfony/security-core": "^6.4 || ^7.1 || ^8.0",
+                "symfony/serializer": "^6.4 || ^7.1 || ^8.0",
+                "symfony/service-contracts": "^3.0",
+                "symfony/translation-contracts": "^3.0",
+                "symfony/uid": "^6.4 || ^7.1 || ^8.0",
+                "twig/twig": "^3.0",
+                "webmozart/assert": "^1.0 || ^2.0"
+            },
+            "conflict": {
+                "doctrine/orm": "3.7.x-dev",
+                "sulu/mcp-bundle": "<=1.0.0-RC3"
+            },
+            "require-dev": {
+                "cmsig/seal-memory-adapter": "^0.12.10",
+                "handcraftedinthealps/code-coverage-checker": "^0.2.1",
+                "jangregor/phpstan-prophecy": "^2.0",
+                "league/oauth2-server-bundle": "^1.2",
+                "php-cs-fixer/shim": "^3.14",
+                "phpspec/prophecy": "^1.0",
+                "phpspec/prophecy-phpunit": "^2.0",
+                "phpstan/phpstan": "^2.0",
+                "phpstan/phpstan-doctrine": "^2.0",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpstan/phpstan-symfony": "^2.0",
+                "phpstan/phpstan-webmozart-assert": "^2.0",
+                "phpunit/phpunit": "^11.0",
+                "rector/rector": "^2.0",
+                "shipmonk/composer-dependency-analyser": "^1.8",
+                "spaze/phpstan-disallowed-calls": "^4.7",
+                "sulu/mcp-bundle": "^1.0 || 1.0.x-dev",
+                "symfony/ai-agent": "^0.14",
+                "symfony/browser-kit": "^6.4 || ^7.1 || ^8.0",
+                "symfony/console": "^6.4 || ^7.1 || ^8.0",
+                "symfony/dom-crawler": "^6.4 || ^7.1 || ^8.0",
+                "symfony/dotenv": "^6.4 || ^7.1 || ^8.0",
+                "symfony/framework-bundle": "^6.4 || ^7.1 || ^8.0",
+                "symfony/mcp-bundle": "^0.13",
+                "symfony/string": "^6.4 || ^7.1 || ^8.0"
+            },
+            "suggest": {
+                "sulu/mcp-bundle": "Enables the sulu_product_* MCP tools and the sulu_content_search / unified content tools product hook.",
+                "symfony/ai-agent": "To expose read-only product/attribute tools to a Symfony AI agent."
+            },
+            "default-branch": true,
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Sulu\\Product\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Sulu Product Bundle",
+            "support": {
+                "issues": "https://github.com/sulu/SuluProductBundle/issues",
+                "source": "https://github.com/sulu/SuluProductBundle/tree/3.0"
+            },
+            "time": "2026-10-07T19:26:43+00:00"
         },
         {
             "name": "sulu/sulu",
@@ -14946,6 +15039,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "sulu/product-bundle": 20,
         "sulu/sulu": 20
     },
     "prefer-stable": false,
