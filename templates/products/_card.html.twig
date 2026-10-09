@@ -5,6 +5,6 @@
     {{ include('products/_image.html.twig', {image: item.image|default(null), format: 'product-card', alt: item.headline, class: 'aspect-square w-full object-cover transition group-hover:scale-105'}) }}
     <div class="p-4">
         <h3 class="font-semibold">{{ item.headline }}</h3>
-        <p class="mt-1 text-sm text-brand-700">{{ item.claim }}</p>
+        {% if item.claim|default %}<p class="mt-1 text-sm text-brand-700">{{ item.claim }}</p>{% endif %}
     </div>
 </a>
