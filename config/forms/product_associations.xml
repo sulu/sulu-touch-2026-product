@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<form xmlns="http://schemas.sulu.io/template/template"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://schemas.sulu.io/template/template http://schemas.sulu.io/template/form-1.0.xsd">
+
+    <key>product_associations</key>
+
+    <properties>
+        <property name="associations/accessory" type="product_selection">
+            <meta>
+                <title lang="en">Goes well with</title>
+            </meta>
+
+            <params>
+                <param name="properties" type="collection">
+                    <param name="headline" value="headline"/>
+                    <param name="claim" value="claim"/>
+                    <param name="image" value="image"/>
+                </param>
+            </params>
+        </property>
+
+        <property name="associations/alternative" type="product_selection">
+            <meta>
+                <title lang="en">Alternatives</title>
+            </meta>
+
+            <params>
+                <param name="properties" type="collection">
+                    <param name="headline" value="headline"/>
+                    <param name="claim" value="claim"/>
+                    <param name="image" value="image"/>
+                </param>
+            </params>
+        </property>
+    </properties>
+</form>
