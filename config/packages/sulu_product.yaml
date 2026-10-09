@@ -12,3 +12,8 @@ sulu_product:
         weight: { units: [GRAM, KILOGRAM] }
         temperature: { units: [CELSIUS] }
         volume: ~   # every volume unit
+
+    # what each entry of `product.variants` carries; the colour and size switchers read the attributes
+    variants:
+        properties:
+            attributes: product.attributes
