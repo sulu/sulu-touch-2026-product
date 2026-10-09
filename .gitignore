@@ -58,3 +58,8 @@ phpstan.neon
 /.twig-cs-fixer.php
 /.twig-cs-fixer.cache
 ###< vincentlanglet/twig-cs-fixer ###
+
+###> symfony/asset-mapper ###
+/public/assets/
+/assets/website/vendor/
+###< symfony/asset-mapper ###

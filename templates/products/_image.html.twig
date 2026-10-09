@@ -1,0 +1,16 @@
+{# A product picture: `image` is the media, `format` the thumbnail format, `alt` the alt text, `class` the classes of the img.
+   A picture the media library marks as made by AI (origin) carries a badge in the corner, unless its disclosure is switched off.
+   The disclosure text of the media is the tooltip, the icon variant picks the colours. #}
+{% if image.thumbnails|default(null) %}
+    <span class="relative block">
+        <img src="{{ image.thumbnails[format] }}" alt="{{ alt }}" class="{{ class }}">
+        {% if image.origin|default('unknown') in ['ai_generated', 'ai_modified'] and not image.aiDisclosureDisabled|default(false) %}
+            {% set variant = image.aiDisclosureIconVariant|default('auto') %}
+            <span class="pointer-events-none absolute right-3 top-3 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold uppercase tracking-wider shadow-sm backdrop-blur {{ variant == 'light' ? 'bg-white/90 text-brand-900' : 'bg-brand-900/80 text-white' }}"
+                  title="{{ image.aiDisclosureText|default('Image made with AI') }}">
+                <svg class="size-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.2 6.3L20.5 10l-6.3 1.7L12 18l-2.2-6.3L3.5 10l6.3-1.7L12 2zm7 12l1 2.9 2.9 1-2.9 1-1 2.9-1-2.9-2.9-1 2.9-1 1-2.9z"/></svg>
+                AI
+            </span>
+        {% endif %}
+    </span>
+{% endif %}
