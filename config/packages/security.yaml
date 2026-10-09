@@ -17,6 +17,12 @@ security:
             # Ensure dev tools and static assets are always allowed
             pattern: ^/(_profiler|_wdt|assets|build)/
             security: false
+        mcp:
+            pattern: ^/admin/mcp/?$
+            provider: sulu
+            stateless: true
+            entry_point: sulu_mcp.authentication_entry_point
+            oauth2: true
         admin:
             pattern: ^/admin(\/|$)
             lazy: true
@@ -64,6 +70,10 @@ security:
 
     # Note: Only the *first* matching rule is applied
     access_control:
+        - { path: ^/\.well-known/oauth-, roles: PUBLIC_ACCESS }
+        - { path: ^/admin/mcp/register$, roles: PUBLIC_ACCESS }
+        - { path: ^/admin/mcp/token$, roles: PUBLIC_ACCESS }
+        - { path: '^/admin/mcp/?$', roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/admin/reset, roles: PUBLIC_ACCESS }
         - { path: ^/admin/security/reset, roles: PUBLIC_ACCESS }
         - { path: ^/admin/login$, roles: PUBLIC_ACCESS }

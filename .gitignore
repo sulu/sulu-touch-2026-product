@@ -63,3 +63,11 @@ phpstan.neon
 /public/assets/
 /assets/website/vendor/
 ###< symfony/asset-mapper ###
+
+###> league/oauth2-server-bundle ###
+/config/jwt/*.pem
+###< league/oauth2-server-bundle ###
+
+###> sulu/mcp-bundle ###
+/config/jwt/*.pem
+###< sulu/mcp-bundle ###

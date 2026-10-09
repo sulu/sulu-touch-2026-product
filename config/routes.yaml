@@ -7,8 +7,13 @@
 # To list all registered routes, run the following command:
 #   bin/console debug:router
 
+# Only the app's own controllers: `routing.controllers` imports every service with a #[Route]
+# attribute, which re-imports SuluMcpBundle's admin controllers without their /admin prefix.
 controllers:
-    resource: routing.controllers
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
 
 # If you have a simple login on your website activate the following routes
 # See also: https://docs.sulu.io/en/2.6/cookbook/user-context-caching.html
